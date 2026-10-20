@@ -1,0 +1,23 @@
+# .conf file content in YAML format
+# use single quoted string to not face special char problem
+
+server:
+  debug: false
+  env: 'development'
+  allowed_hosts:
+    - '*'
+  csrf_trusted_origins:
+    - 'XXX'
+  secret_key: 'XXX'
+
+rds:
+  db_name: ''
+  db_user: ''
+  db_password: ''
+  db_host: ''
+  db_port: '5432'
+  db_replica_host: ''
+
+error:
+  teams_webhook: 'XXX'
+  sentry_dsn: 'XXX'
