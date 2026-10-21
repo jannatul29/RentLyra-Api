@@ -66,7 +66,7 @@ class ServerConfig(BaseModel):
     env: str = 'development'
     is_using_windows: bool = False
     allowed_hosts: List[str] = ['*']
-    cors_allowed_hosts: List[str] = ['*']
+    cors_allowed_hosts: List[str] = []
     csrf_trusted_origins: List[str] = []
     secret_key: str = ''
     gdal_libaray_path: str = ''
