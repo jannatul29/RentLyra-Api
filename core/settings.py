@@ -41,7 +41,11 @@ if config.server.env != "production":
         'http://localhost:8000',
     ])
 
-# Application definition
+AUTH_USER_MODEL = 'auth.User'
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
+AUTH_USER_MODEL = 'users.User'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -72,6 +76,7 @@ INSTALLED_APPS = [
     'django_apscheduler',
     'rest_framework',
     'db',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -160,7 +165,11 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -177,3 +186,7 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+if config.server.is_using_windows:
+    GDAL_LIBRARY_PATH = config.server.gdal_libaray_path
+    GEOS_LIBRARY_PATH = config.server.geos_libaray_path
