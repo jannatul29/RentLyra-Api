@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'django_apscheduler',
     'rest_framework',
     'db',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -177,3 +178,7 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+if config.server.is_using_windows:
+    GDAL_LIBRARY_PATH = config.server.gdal_libaray_path
+    GEOS_LIBRARY_PATH = config.server.geos_libaray_path
