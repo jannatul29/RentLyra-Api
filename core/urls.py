@@ -15,8 +15,43 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
+                                   SpectacularSwaggerView)
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+
+class APIVersionDocumentationView(APIView):
+    """
+    API version documentation for RentLyra.
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+        return Response({
+            "v1": request.build_absolute_uri("/v1/"),
+            "schema": request.build_absolute_uri("/api/schema/"),
+            "swagger": request.build_absolute_uri("/swagger/"),
+            "redoc": request.build_absolute_uri("/redoc/"),
+        })
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("", APIVersionDocumentationView.as_view(), name="api-version"),
+    path("admin/", admin.site.urls),
+    path("v1/", include("users.urls")),
+    path("accounts/", include("rest_framework.urls")),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
 ]

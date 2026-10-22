@@ -4,6 +4,8 @@ psycopg2==2.9.3
 gunicorn==20.1.0
 uvicorn==0.18.3
 djangorestframework
+djangorestframework_simplejwt
+pygments
 numpy
 pandas
 django-postgres-extra 
@@ -53,3 +55,12 @@ pydantic
 pytest==7.4.3
 pyyaml
 schedule
+drf-spectacular
+djangorestframework-gis
+django-filter
+django_extensions
+validate_email
+phonenumbers
+pycountry
+django-utils-six
+django-storages
