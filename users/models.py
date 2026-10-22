@@ -46,6 +46,13 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     """User model."""
+    
+    class GenderType(models.TextChoices):
+        NOT_SPECIFIED = '', _('Prefer not to say')
+        MALE = 'male', _('Male')
+        FEMALE = 'female', _('Female')
+        CISGENDER = 'cisgender', _('Cisgender')
+        TRANSGENDER = 'transgender', _('Transgender')
 
     username = None
     email = models.EmailField(_('email address'), unique=True)
@@ -58,6 +65,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20, unique=True, blank=True, null=True, help_text="Example: +16045551234")
     profile_image = models.ImageField(max_length=255, blank=True, storage=storage_backends.ProfileImageMediaStorage, help_text="Image Field")
     source_url = models.URLField(max_length=1000, blank=True, null=True)
+    gender = models.CharField(max_length=50, blank=True, null=True, choices=GenderType.choices, help_text="Example: Female")
     country = models.CharField(max_length=255, blank=True, help_text="Example: Canada")
     country_code = models.CharField(max_length=3, blank=True, help_text="Example: CA")
     state = models.CharField(max_length=255, blank=True, help_text="Example: Vancouver")
@@ -76,3 +84,22 @@ class User(AbstractUser):
                 self.profile_image.save(os.path.basename(self.source_url), File(downloaded_file), save=False)
 
         super(User, self).save(*args, **kwargs)
+
+
+class PhoneEmailVerification(models.Model):
+    class Meta:
+        unique_together = (('phone_email', 'activation_code'),)
+        verbose_name = 'OTP Confirmation'
+        verbose_name_plural = 'OTP Confirmation'
+
+    class VerificationType(models.TextChoices):
+        Email = 'email', _('Email')
+        Phone_Number = 'phone_number', _('Phone Number')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="User ID")
+    phone_email = models.CharField(max_length=50, help_text="Example: example@gmail.com or +16045551234")
+    activation_code = models.IntegerField(help_text="Integer Field (4 digits)")
+    verification_type = models.CharField(max_length=50, choices=VerificationType.choices, help_text="Choice Field")
+
+    def __str__(self):
+        return self.phone_email
