@@ -1,5 +1,5 @@
 # RentLyra API
-RentLyra API is a vehicle rental backend built with Django, PostgreSQL, and PostGIS.
+RentLyra API is a ride sharing backend built with Django, PostgreSQL, and PostGIS.
 
 ## Prerequisites
 
