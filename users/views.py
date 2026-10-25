@@ -1,3 +1,40 @@
-from django.shortcuts import render
+from datetime import datetime
 
-# Create your views here.
+import pytz
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import update_last_login
+from django.core.exceptions import ValidationError
+from django.db import transaction, IntegrityError
+from datetime import timezone
+from rest_framework import serializers
+from rest_framework import generics, status, parsers
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
+
+from users import serializers
+from users.models import User
+
+
+class UserCreate(generics.CreateAPIView):
+    """
+    Create a new user.
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.RegisterSerializer
+    parser_classes = [parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "An activation link is sent to your email. Please follow the instructions to activate your "
+                           "account.",
+                "data": []
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
