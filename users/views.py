@@ -38,3 +38,60 @@ class UserCreate(generics.CreateAPIView):
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserActivate(generics.CreateAPIView):
+    """
+    Activate user
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.UserActivateSerializers
+    parser_classes = [parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.UserActivateSerializers(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            update_last_login(None, user)
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "message": "Activation successful",
+                "data": {
+                    'refresh': str(refresh),
+                    'refresh_token_expires': refresh['exp'],
+                    'access': str(refresh.access_token),
+                    'access_token_expires': refresh.access_token['exp'],
+                    "user_details": serializers.UserProfileSerializer(user).data
+                }
+            })
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginAPIView(generics.CreateAPIView):
+    """
+    User Login
+    """
+    serializer_class = serializers.LoginSerializers
+    parser_classes = [parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            update_last_login(None, user)
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                "message": "Success",
+                "data": {
+                    'refresh': str(refresh),
+                    'refresh_token_expires': refresh['exp'],
+                    'access': str(refresh.access_token),
+                    'access_token_expires': refresh.access_token['exp'],
+                    "user_details": serializers.UserProfileSerializer(user).data
+                }
+            })
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
