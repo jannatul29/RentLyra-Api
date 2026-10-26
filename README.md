@@ -52,7 +52,7 @@ Open file `core/config/app.conf` and put appropriates credentials
 make virtualenv
 source env/bin/activate
 pip3 install uv
-uv install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ## Migrations
